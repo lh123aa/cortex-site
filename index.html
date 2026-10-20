@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cortex Pro · 给 AI Agent 装永久记忆</title>
+<meta name="description" content="Cortex 是单二进制、MCP 原生的本地知识库，给 AI 编程工具装永久记忆。Pro 订阅：中国 ¥79/月，海外 $79/月。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+:root{
+  --bg:#0B0D12; --surface:#141824; --surface-2:#1C2233;
+  --fg:#F5F6F8; --fg-2:#8A90A0; --line:#262C3D;
+  --brand:#5B8DEF; --brand-dim:#3A5FB8; --active:#3DDC97;
+  --warn:#F5A623;
+  --mono:ui-monospace,"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --maxw:1120px;
+}
+/* 双币种显示：默认全显示（未判断前），判断后只显示对应地区 */
+.currency-en,.pay-intl{display:none}
+html[data-region="cn"] .currency-en,html[data-region="cn"] .pay-intl{display:none}
+html[data-region="intl"] .currency-cny,html[data-region="intl"] .pay-cny,
+html[data-region="intl"] .tag-cny,html[data-region="intl"] .pricing-cny{display:none}
+html[data-region="intl"] .currency-en,html[data-region="intl"] .pay-intl,
+html[data-region="intl"] .tag-en,html[data-region="intl"] .pricing-intl{display:block}
+.region-badge{font-family:var(--mono);font-size:11px;color:var(--fg-2);border:1px solid var(--line);border-radius:6px;padding:3px 8px;display:inline-flex;gap:6px;align-items:center}
+.region-badge b{color:var(--active);font-weight:600}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+.mono{font-family:var(--mono)}
+/* nav */
+.nav{position:sticky;top:0;z-index:20;background:rgba(11,13,18,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:var(--mono);font-weight:700;font-size:18px;letter-spacing:-.5px}
+.logo b{color:var(--brand)}
+.nav-links{display:flex;gap:26px;font-size:14px;color:var(--fg-2)}
+.nav-links a:hover{color:var(--fg)}
+.btn{font-family:var(--mono);font-size:13px;font-weight:600;padding:9px 16px;border-radius:8px;cursor:pointer;border:1px solid var(--brand);background:var(--brand);color:#0B0D12;display:inline-block}
+.btn:hover{background:var(--brand-dim)}
+.btn-ghost{background:transparent;color:var(--fg);border-color:var(--line)}
+.btn-ghost:hover{border-color:var(--brand);color:var(--brand);background:transparent}
+/* hero */
+.hero{padding:84px 0 64px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.eyebrow{font-family:var(--mono);font-size:13px;color:var(--brand);letter-spacing:0;margin-bottom:18px;display:flex;gap:10px;align-items:center}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--active);box-shadow:0 0 10px var(--active)}
+h1{font-size:44px;line-height:1.12;letter-spacing:-1.2px;font-weight:700;margin-bottom:20px}
+h1 .em{color:var(--brand)}
+.lead{color:var(--fg-2);font-size:18px;max-width:48ch;margin-bottom:30px}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap}
+/* memory card */
+.mem-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;font-family:var(--mono);font-size:13px}
+.mem-head{display:flex;justify-content:space-between;color:var(--fg-2);font-size:11px;margin-bottom:16px;text-transform:uppercase;letter-spacing:1px}
+.mem-head .live{color:var(--active)}
+.mem-item{padding:10px 12px;border-left:2px solid var(--line);margin-bottom:8px;border-radius:0 6px 6px 0;color:var(--fg-2)}
+.mem-item.on{border-left-color:var(--brand);color:var(--fg);background:var(--surface-2)}
+.mem-item .k{color:var(--brand);font-size:11px;display:block;margin-bottom:2px}
+.hero-foot{margin-top:22px;font-size:13px;color:var(--fg-2);display:flex;gap:18px;flex-wrap:wrap}
+.hero-foot .mono{color:var(--fg)}
+/* section */
+section.block{padding:72px 0}
+.sec-title{font-size:30px;font-weight:700;letter-spacing:-.5px;margin-bottom:14px}
+.sec-sub{color:var(--fg-2);max-width:56ch;margin-bottom:40px}
+/* features */
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.feat{background:var(--bg);padding:30px}
+.feat .ic{font-family:var(--mono);color:var(--brand);font-size:13px;margin-bottom:14px}
+.feat h3{font-size:18px;margin-bottom:8px}
+.feat p{color:var(--fg-2);font-size:15px}
+/* pricing */
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.plan{border:1px solid var(--line);border-radius:16px;padding:34px;background:var(--surface);position:relative}
+.plan .flag{position:absolute;top:-12px;left:26px;font-family:var(--mono);font-size:11px;font-weight:600;background:var(--brand);color:#0B0D12;padding:4px 10px;border-radius:6px}
+.plan .pname{font-size:15px;color:var(--fg-2);margin-bottom:6px}
+.plan .pprice{font-family:var(--mono);font-size:40px;font-weight:700;letter-spacing:-1px;display:flex;gap:28px;align-items:baseline}
+.plan .pprice span{font-size:16px;color:var(--fg-2);font-weight:400}
+.plan ul{list-style:none;margin:24px 0;display:grid;gap:11px}
+.plan li{font-size:14px;color:var(--fg-2);display:flex;gap:10px}
+.plan li::before{content:"→";color:var(--brand);font-family:var(--mono)}
+.plan .btn{width:100%;text-align:center;margin-top:8px}
+.plan-cn .flag{background:var(--active);color:#0B0D12}
+/* pay */
+.pay{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.pay-box{border:1px solid var(--line);border-radius:14px;padding:28px;background:var(--surface)}
+.pay-box h4{font-size:16px;margin-bottom:14px;font-family:var(--mono)}
+.pay-box p{color:var(--fg-2);font-size:14px;margin-bottom:16px}
+.qr{width:150px;height:150px;border:1px dashed var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--fg-2);font-size:12px;margin:0 auto 14px;font-family:var(--mono)}
+/* doc */
+.doc pre{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;overflow-x:auto;font-family:var(--mono);font-size:13px;color:var(--fg);line-height:1.7}
+.doc code .c{color:var(--fg-2)}
+.doc code .k{color:var(--brand)}
+/* footer */
+footer{border-top:1px solid var(--line);padding:40px 0;color:var(--fg-2);font-size:14px}
+.foot-grid{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.disclaimer{font-size:12px;margin-top:24px;color:var(--fg-2);opacity:.8}
+/* 双币种：默认（未判断前）两价并列展示；判断后按 data-region 只显示对应地区 */
+html[data-region="intl"] .currency-cny,html[data-region="intl"] .tag-cny,
+html[data-region="intl"] .pay-cny,html[data-region="intl"] .pricing-cny{display:none}
+html[data-region="cn"] .currency-en,html[data-region="cn"] .tag-en,
+html[data-region="cn"] .pay-intl,html[data-region="cn"] .pricing-intl{display:none}
+.region-note{font-family:var(--mono);font-size:12px;color:var(--fg-2);margin-top:24px;display:flex;gap:14px;flex-wrap:wrap}
+.region-note b{color:var(--active);font-weight:600}
+@media(max-width:860px){
+  .hero-grid,.feat-grid,.price-grid,.pay{grid-template-columns:1fr}
+  h1{font-size:34px}
+  .nav-links{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+<script>
+/* 地区判断：浏览器时区/语言先渲染，IP 地理定位后台校验，不一致则切换 */
+(function(){
+  function applyCN(){
+    document.documentElement.setAttribute('data-region','cn');
+    document.documentElement.lang='zh';
+  }
+  function applyIntl(){
+    document.documentElement.setAttribute('data-region','intl');
+    document.documentElement.lang='en';
+  }
+  function updateBadge(cn, extra){
+    var b = document.getElementById('region-badge');
+    if (!b) return;
+    b.innerHTML = cn
+      ? '<b>地区：中国大陆</b> ¥79/月'
+      : '<b>Region: ' + (extra||'International') + '</b> $79/mo';
+  }
+  function guessLocal(){
+    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    var lang = (navigator.language||'').toLowerCase();
+    var isCN = (tz.indexOf('Asia/') === 0) || (tz === 'UTC') || (lang.indexOf('zh') === 0);
+    if (isCN) applyCN(); else applyIntl();
+    updateBadge(isCN);
+  }
+  function verifyByIP(){
+    fetch('https://ipapi.co/json/')
+      .then(function(r){return r.json();})
+      .then(function(d){
+        var cn = d && (d.country_code === 'CN' || d.country === 'China');
+        var now = document.documentElement.getAttribute('data-region');
+        if (cn && now !== 'cn') applyCN();
+        if (!cn && now !== 'intl') applyIntl();
+        updateBadge(cn, d && d.country);
+      })
+      .catch(function(){});
+  }
+  function boot(){ guessLocal(); verifyByIP(); }
+  if (document.readyState === 'complete') boot();
+  else document.addEventListener('DOMContentLoaded', boot);
+})();
+</script>
+</head>
+<body>
+
+<nav class="nav"><div class="wrap nav-in">
+  <div class="logo">Cortex<b>.</b></div>
+  <div class="nav-links">
+    <span class="region-badge" id="region-badge">检测地区中…</span>
+    <a href="#features">特性</a>
+    <a href="#pricing">定价</a>
+    <a href="#pay">购买</a>
+    <a href="#doc">文档</a>
+    <a href="https://github.com/lh123aa/cortex" target="_blank">GitHub</a>
+  </div>
+  <a class="btn btn-ghost" href="https://github.com/lh123aa/cortex" target="_blank">开源版</a>
+</div></nav>
+
+<header class="hero"><div class="wrap hero-grid">
+  <div>
+    <div class="eyebrow"><span class="dot"></span>单二进制 · MCP 原生 · 100% 本地</div>
+    <h1>给 AI Agent<br><span class="em">装永久记忆</span></h1>
+    <p class="lead">Cortex 是一个本地知识库，让 Claude Code / Cursor / Trae 跨会话记住你的偏好、约定和历史。单文件零依赖，MCP 原生 8 工具，混合搜索，数据不出网。</p>
+    <div class="cta-row">
+      <a class="btn" href="#pricing">订阅 Pro</a>
+      <a class="btn btn-ghost" href="https://github.com/lh123aa/cortex" target="_blank">免费用开源版</a>
+    </div>
+    <div class="hero-foot">
+      <span>v3.5.3</span><span>MIT 开源</span><span>10/10 测试通过</span><span class="mono">0 云依赖</span>
+    </div>
+  </div>
+  <div class="mem-card" aria-label="记忆片段示意">
+    <div class="mem-head"><span>memory.cortex</span><span class="live">● 已连接 Agent</span></div>
+    <div class="mem-item on"><span class="k">preference</span>偏好 TypeScript strict 模式，函数式风格</div>
+    <div class="mem-item"><span class="k">project</span>cortex: 单二进制 Go，SQLite 存储</div>
+    <div class="mem-item"><span class="k">learned</span>用户上次踩坑：MCP server 超时需设 30s</div>
+    <div class="mem-item"><span class="k">context</span>当前在写 license 交付模块</div>
+  </div>
+</div></header>
+
+<section class="block" id="features"><div class="wrap">
+  <h2 class="sec-title">为什么是 Cortex</h2>
+  <p class="sec-sub">Mem0 要云、AnythingLLM 要 Node/Docker、Dify 是重平台。Cortex 是另一个东西：一个能装进 AI Agent 的本地记忆内核。</p>
+  <div class="feat-grid">
+    <div class="feat"><div class="ic">[01]</div><h3>单二进制，零依赖</h3><p>一个文件，下载即用。不用装 Python、不用 Docker、不用云。MIT 开源，基础功能免费。</p></div>
+    <div class="feat"><div class="ic">[02]</div><h3>MCP 原生 8 工具</h3><p>直接接 Claude Code / Cursor / OpenCode / Trae。Agent 通过 MCP 协议读写你的知识库，无需额外集成。</p></div>
+    <div class="feat"><div class="ic">[03]</div><h3>内置记忆系统</h3><p>Agent 跨会话记住你的偏好、项目约定、历史上下文。这是"永久记忆"，不是每次重来的无状态调用。</p></div>
+    <div class="feat"><div class="ic">[04]</div><h3>混合搜索 + 100% 本地</h3><p>向量 + BM25 混合检索，SQLite 本地存储。你的数据不出网，隐私 100% 自己掌握。</p></div>
+  </div>
+</div></section>
+
+<section class="block" id="pricing"><div class="wrap">
+  <h2 class="sec-title">
+    <span class="currency-cny">定价</span>
+    <span class="currency-en">Pricing</span>
+  </h2>
+  <p class="sec-sub">
+    <span class="currency-cny">开源版永远免费。Pro 订阅解锁功能上限解除与技术支持。前 3 名早鸟价。</span>
+    <span class="currency-en">Open source is free forever. Pro subscription unlocks lifted document limits and tech support. Early bird for the first 3.</span>
+  </p>
+  <div class="price-grid">
+    <div class="plan">
+      <div class="flag tag-cny">中国 · 人民币</div>
+      <div class="flag tag-en">International · USD</div>
+      <div class="pname">Cortex Pro</div>
+      <div class="pprice">
+        <span class="currency-cny">¥79<span>/月</span></span>
+        <span class="currency-en">$79<span>/mo</span></span>
+      </div>
+      <ul>
+        <li>
+          <span class="currency-cny">文档上限解除</span>
+          <span class="currency-en">Unlimited documents</span>
+        </li>
+        <li>
+          <span class="currency-cny">技术支持</span>
+          <span class="currency-en">Tech support</span>
+        </li>
+        <li>
+          <span class="currency-cny">License key 激活</span>
+          <span class="currency-en">License key activation</span>
+        </li>
+        <li>
+          <span class="currency-cny">早鸟价：前 3 名 ¥59/月</span>
+          <span class="currency-en">Early bird: first 3 get $59/mo</span>
+        </li>
+      </ul>
+      <a class="btn" href="#pay">
+        <span class="currency-cny">支付宝订阅</span>
+        <span class="currency-en">Subscribe</span>
+      </a>
+    </div>
+  </div>
+  <div class="region-note">
+    <span class="currency-cny"><b>按你的所在地区自动匹配价格：</b>中国大陆 ¥79/月 · 其他国家和地区 $79/月</span>
+    <span class="currency-en"><b>Pricing auto-matches your region:</b> Mainland China ¥79/mo · Other regions $79/mo</span>
+  </div>
+</div></section>
+
+<section class="block" id="pay"><div class="wrap">
+  <h2 class="sec-title">
+    <span class="currency-cny">购买</span>
+    <span class="currency-en">Subscribe</span>
+  </h2>
+  <p class="sec-sub">
+    <span class="currency-cny">订阅后留下邮箱，Pro license key 会在 24h 内发给你。开源自由，Pro 是支持项。</span>
+    <span class="currency-en">Subscribe and leave your email — your Pro license key arrives within 24h. The open source version stays free.</span>
+  </p>
+  <div class="pay">
+    <div class="pay-box pay-cny">
+      <h4>支付宝 · ¥79/月</h4>
+      <p>扫下方收款码订阅。付款后把「订单截图 + 邮箱」发给我（GitHub Issue / 私信），我手动激活 license key。</p>
+      <div class="qr">[ 支付宝个人收款码<br>待替换 ]</div>
+      <a class="btn btn-ghost" style="width:100%;text-align:center" href="https://github.com/lh123aa/cortex/issues/new?title=【订阅】Cortex%20Pro%20license&body=邮箱%3A%0A订单截图%3A%20%28粘贴%29">留邮箱并通知我 →</a>
+    </div>
+    <div class="pay-box pay-intl">
+      <h4>Stripe · $79/mo</h4>
+      <p>点击订阅，Stripe 处理支付并自动交付 license。销售税由 Stripe 代管。</p>
+      <div class="qr" style="width:100%">[ Stripe 即将开通<br>card 验证完成后可用 ]</div>
+      <a class="btn" style="width:100%;text-align:center;opacity:.55;cursor:wait">Subscribe with Stripe</a>
+    </div>
+  </div>
+</div></section>
+
+<section class="block doc" id="doc"><div class="wrap">
+  <h2 class="sec-title">激活 license</h2>
+  <p class="sec-sub">收到 key 后，Cortex 一行激活 Pro。</p>
+  <pre><code><span class="c"># 1. 下载 Cortex（单二进制）</span>
+<span class="k">wget</span> https://github.com/lh123aa/cortex/releases/latest/cortex
+
+<span class="c"># 2. 激活 Pro license key（替换为你收到的 key）</span>
+<span class="k">./cortex license activate</span> --key ck-pro-xxxxxx
+
+<span class="c"># 3. 确认已解锁</span>
+<span class="k">./cortex license status</span>
+<span class="c"># → tier=pro  active=true</span></code></pre>
+  <p class="sec-sub" style="margin-top:28px">接入 MCP（Claude Code / Cursor / Trae）见 <a href="https://github.com/lh123aa/cortex" style="color:var(--brand)" target="_blank">GitHub README</a>。Pro 解锁文档上限 + 技术支持，激活即终身有效（订阅期内）。</p>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="foot-grid">
+    <div class="mono">Cortex. — 一人公司出海验证中 · build in public</div>
+    <div>开源版 MIT · 基础功能永远免费 · Pro 订阅 ¥79 / $79</div>
+  </div>
+  <p class="disclaimer">Cortex 是开源软件（MIT）。Pro 订阅为付费支持项，非官方强制功能。购买即表示你理解开源版可独立使用，Pro 提供上限解除与技术支持。付款后 license key 于 24h 内交付。此页为个人创作者验证页，非企业产品页。</p>
+</div></footer>
+
+</body>
+</html>
