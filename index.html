@@ -261,32 +261,40 @@ html[data-region="cn"] .pay-intl,html[data-region="cn"] .pricing-intl{display:no
   <div class="pay">
     <div class="pay-box pay-cny">
       <h4>支付宝 · ¥79/月</h4>
-      <p>扫下方收款码订阅。付款后把「订单截图 + 邮箱」发给我（GitHub Issue / 私信），我手动激活 license key。</p>
+      <p>付款后把「订单截图 + 邮箱」发 GitHub Issue，我手动激活 license key（24h 内交付）。</p>
       <div class="qr">[ 支付宝个人收款码<br>待替换 ]</div>
       <a class="btn btn-ghost" style="width:100%;text-align:center" href="https://github.com/lh123aa/cortex/issues/new?title=【订阅】Cortex%20Pro%20license&body=邮箱%3A%0A订单截图%3A%20%28粘贴%29">留邮箱并通知我 →</a>
     </div>
     <div class="pay-box pay-intl">
       <h4>Stripe · $79/mo</h4>
-      <p>点击订阅，Stripe 处理支付并自动交付 license。销售税由 Stripe 代管。</p>
-      <div class="qr" style="width:100%">[ Stripe 即将开通<br>card 验证完成后可用 ]</div>
+      <p>Click to subscribe — Stripe handles payment and delivers your license automatically. Sales tax managed by Stripe.</p>
+      <div class="qr" style="width:100%">[ Stripe coming soon — available after card verification ]</div>
       <a class="btn" style="width:100%;text-align:center;opacity:.55;cursor:wait">Subscribe with Stripe</a>
     </div>
   </div>
 </div></section>
 
 <section class="block doc" id="doc"><div class="wrap">
-  <h2 class="sec-title">激活 license</h2>
-  <p class="sec-sub">收到 key 后，Cortex 一行激活 Pro。</p>
-  <pre><code><span class="c"># 1. 下载 Cortex（单二进制）</span>
+  <h2 class="sec-title">
+    <span class="currency-cny">激活 license</span>
+    <span class="currency-en">Activate your license</span>
+  </h2>
+  <p class="sec-sub">
+    <span class="currency-cny">收到 key 后，Cortex 一行激活 Pro。</span>
+    <span class="currency-en">One command activates Pro once you receive your key.</span>
+  </p>
+  <pre><code><span class="c"># 1. Download Cortex (single binary) / 下载 Cortex（单二进制）</span>
 <span class="k">wget</span> https://github.com/lh123aa/cortex/releases/latest/cortex
 
-<span class="c"># 2. 激活 Pro license key（替换为你收到的 key）</span>
+<span class="c"># 2. Activate Pro / 激活 Pro license key（替换为你收到的 key）</span>
 <span class="k">./cortex license activate</span> --key ck-pro-xxxxxx
 
-<span class="c"># 3. 确认已解锁</span>
-<span class="k">./cortex license status</span>
-<span class="c"># → tier=pro  active=true</span></code></pre>
-  <p class="sec-sub" style="margin-top:28px">接入 MCP（Claude Code / Cursor / Trae）见 <a href="https://github.com/lh123aa/cortex" style="color:var(--brand)" target="_blank">GitHub README</a>。Pro 解锁文档上限 + 技术支持，激活即终身有效（订阅期内）。</p>
+<span class="c"># 3. Verify / 确认已解锁（→ tier=pro active=true）</span>
+<span class="k">./cortex license status</span></code></pre>
+  <p class="sec-sub" style="margin-top:28px">
+    <span class="currency-cny">接入 MCP（Claude Code / Cursor / Trae）见 <a href="https://github.com/lh123aa/cortex" style="color:var(--brand)" target="_blank">GitHub README</a>。Pro 解锁文档上限 + 技术支持，订阅期内激活即终身有效。</span>
+    <span class="currency-en">MCP integration (Claude Code / Cursor / Trae) — see the <a href="https://github.com/lh123aa/cortex" style="color:var(--brand)" target="_blank">GitHub README</a>. Pro lifts document limits and adds tech support, valid for the duration of your subscription.</span>
+  </p>
 </div></section>
 
 <footer><div class="wrap">
